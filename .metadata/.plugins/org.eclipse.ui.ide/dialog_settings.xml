@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\alexey\Atollic_STM32_workspace\MatlabSpectrumGenerator"/>
+		<item value="D:\alexey\Atollic_STM32_workspace"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\STM32L4_Test"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\USB_HID_Test"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\SpectrumGenerator"/>
