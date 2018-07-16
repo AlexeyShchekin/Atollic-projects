@@ -55,7 +55,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "usbd_customhid.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -78,36 +78,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void HandleUSB(char * USB_String, int String_Length)
 {
-	if (strncmp(USB_String,"PD",2)==0)
-	{
-		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t *)USB_String, String_Length);
-		int PD_NUMBER = ((int)USB_String[2] - (int)'1' + 1);
-		int PWM = atoi(&USB_String[4]);
-		switch(PD_NUMBER)
-		{
-			case 1:
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, PWM-1);
-				break;
-			case 2:
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PWM-1);
-				break;
-			case 3:
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, PWM-1);
-				break;
-			case 4:
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, PWM-1);
-				break;
-			case 5:
-				__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, PWM-1);
-				break;
-		}
-	}
-	else HAL_UART_Transmit(&huart1, (uint8_t*)USB_String, String_Length, 1);
-}
-
-void HandleUARTCommand(char * CMD_String, int String_Length)
-{
-	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t *)CMD_String, String_Length);
+	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t *)USB_String, String_Length);
 }
 /* USER CODE END 0 */
 
@@ -144,6 +115,11 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

@@ -36,11 +36,16 @@
 #include "stm32f1xx_it.h"
 
 /* USER CODE BEGIN 0 */
+#include "main.h"
 
+char CMD[64];
+int CMD_Length;
+uint8_t byte_data;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
+extern UART_HandleTypeDef huart1;
 
 /******************************************************************************/
 /*            Cortex-M3 Processor Interruption and Exception Handlers         */ 
@@ -204,6 +209,36 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
+}
+
+/**
+* @brief This function handles USART1 global interrupt.
+*/
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+  if (__HAL_UART_GET_IT_SOURCE(&huart1,UART_IT_RXNE))
+    {
+  	  __HAL_UART_CLEAR_FLAG(&huart1,UART_IT_RXNE);
+  	  byte_data = USART1->DR;
+
+  	  CMD[CMD_Length] = (char)byte_data;
+
+  	  if (byte_data==10 || byte_data==13)
+  	  {
+  		  HandleUARTCommand(CMD, CMD_Length);
+  		//  CMD_Flag = 0;
+  	  }
+  	  else
+  	  {
+  		  CMD_Length++;
+  	  }
+    }
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

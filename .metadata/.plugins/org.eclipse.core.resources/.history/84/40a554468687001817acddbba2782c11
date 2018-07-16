@@ -67,8 +67,7 @@
 /* #define USE_FULL_ASSERT    1U */
 
 /* USER CODE BEGIN Private defines */
-void HandleUSB(char * USB_String, int String_Length);
-void HandleUARTCommand(char * CMD_String, int String_Length);
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
