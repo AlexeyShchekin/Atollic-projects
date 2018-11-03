@@ -1,7 +1,8 @@
+
 /**
   ******************************************************************************
-  * File Name          : main.c
-  * Description        : Main program body
+  * @file           : main.c
+  * @brief          : Main program body
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -35,7 +36,6 @@
   *
   ******************************************************************************
   */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l1xx_hal.h"
@@ -44,6 +44,7 @@
 #include "dma.h"
 #include "usart.h"
 #include "gpio.h"
+#include <math.h>
 
 /* USER CODE BEGIN Includes */
 
@@ -53,7 +54,15 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-volatile uint16_t ADC_BUF[2];
+volatile uint16_t Set1 = 0;
+volatile uint16_t Set2 = 0;
+volatile float gain = 1.0;
+
+volatile uint16_t ADC_BUF[3];
+volatile uint16_t level = 2048;
+volatile uint16_t levelCounter = 0;
+volatile float currentLevel = 0.0;
+const uint16_t maxlevelCounter = 1000;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,15 +76,49 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, ADC_BUF[0]);
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, ADC_BUF[1]);
+	Set1 = ADC_BUF[0];
+	Set2 = ADC_BUF[1];
+	gain = 4096.0/((float)(4096 - ADC_BUF[2]));
+	Set1 = 2048 + ((Set1 - 2048)*gain);
+	Set2 = 2048 + ((Set2 - 2048)*gain);
+
+	if (Set1 > 2048 + level) {
+		Set1 = 2048 + level;
+	}
+	if (Set1 < 2048 - level) {
+		Set1 = 2048 - level;
+	}
+	if (Set2 > 2048 + level) {
+		Set2 = 2048 + level;
+	}
+	if (Set2 < 2048 - level) {
+		Set2 = 2048 - level;
+	}
+
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, Set1);
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, Set2);
+
+	if (levelCounter<maxlevelCounter)
+	{
+		currentLevel = currentLevel + (float)((ADC_BUF[0]-2048)*(ADC_BUF[0]-2048))/maxlevelCounter;
+	}
+	else
+	{
+		level = (uint16_t)(2048*sqrt(currentLevel));
+		currentLevel = 0.0;
+		levelCounter = 0;
+	}
 }
 
 /* USER CODE END 0 */
 
+/**
+  * @brief  The application entry point.
+  *
+  * @retval None
+  */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -102,12 +145,11 @@ int main(void)
   MX_DAC_Init();
   MX_ADC_Init();
   MX_USART1_UART_Init();
-
   /* USER CODE BEGIN 2 */
   //HAL_ADC_Start_IT(&hadc);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-  HAL_ADC_Start_DMA(&hadc,(uint32_t *)&ADC_BUF,2);
+  HAL_ADC_Start_DMA(&hadc,(uint32_t *)&ADC_BUF,3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -123,8 +165,10 @@ int main(void)
 
 }
 
-/** System Clock Configuration
-*/
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
 
@@ -182,45 +226,43 @@ void SystemClock_Config(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
-  * @param  None
+  * @param  file: The file name as string.
+  * @param  line: The line in file as a number.
   * @retval None
   */
-void _Error_Handler(char * file, int line)
+void _Error_Handler(char *file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   while(1) 
   {
   }
-  /* USER CODE END Error_Handler_Debug */ 
+  /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef USE_FULL_ASSERT
-
+#ifdef  USE_FULL_ASSERT
 /**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
 void assert_failed(uint8_t* file, uint32_t line)
-{
+{ 
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
-
 }
-
-#endif
-
-/**
-  * @}
-  */ 
+#endif /* USE_FULL_ASSERT */
 
 /**
   * @}
-*/ 
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

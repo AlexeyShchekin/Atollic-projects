@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\alexey\Atollic_STM32_workspace\nRF24_Receiver"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\nRF24_STM32L4"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\GPS_Logger"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\STM32L486_USB_HID"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\MatlabSpectrumGenerator"/>
 		<item value="D:\alexey\Atollic_STM32_workspace"/>
