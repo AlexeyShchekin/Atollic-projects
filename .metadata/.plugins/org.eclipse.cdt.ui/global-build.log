@@ -1,2 +1,20 @@
-Info: Nothing to build for nRF24_Receiver
-Info: Nothing to build for nRF24_Receiver
+20:10:15 **** Incremental Build of configuration Debug for project CopterReceiver ****
+Info: Internal Builder is used for build
+arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m3 -std=gnu11 -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F103xB -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -Os -ffunction-sections -fdata-sections -g -fstack-usage -Wall -specs=nano.specs -o Src\nrf24.o ..\Src\nrf24.c 
+..\Src\nrf24.c: In function 'NRF24L01_Receive':
+..\Src\nrf24.c:220:7: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+       dt = *(int16_t*)RX_BUF;
+       ^~
+arm-atollic-eabi-gcc -o CopterReceiver.elf Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash_ex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi_ex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.o Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.o Src\gpio.o Src\main.o Src\nrf24.o Src\spi.o Src\stm32f1xx_hal_msp.o Src\stm32f1xx_it.o Src\system_stm32f1xx.o Src\usart.o startup\startup_stm32f103xb.o -mthumb -mcpu=cortex-m3 -T../STM32F103CB_FLASH.ld -specs=nosys.specs -static -Wl,-Map=CopterReceiver.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs 
+C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.1.0\ide\jre\bin\java -jar C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.1.0\Tools\arm-atollic-reports.jar sizeinfo list CopterReceiver.elf 
+Generate build reports...
+Print size information
+   text	   data	    bss	    dec	    hex	filename
+   9108	    124	   1892	  11124	   2b74	CopterReceiver.elf
+Print size information done
+Generate listing file
+Output sent to: CopterReceiver.list
+Generate listing file done
+Generate build reports done
+arm-atollic-eabi-objcopy.exe -O ihex CopterReceiver.elf CopterReceiver.hex 
+Info: Nothing to build for CopterReceiver

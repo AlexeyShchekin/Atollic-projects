@@ -7204,7 +7204,7 @@ static uint8_t  *USBD_CUSTOM_HID_GetDeviceQualifierDesc (uint16_t *length)
 {
  8002ec6:	b570      	push	{r4, r5, r6, lr}
   USBD_LL_OpenEP(pdev,
- 8002ec8:	2308      	movs	r3, #8
+ 8002ec8:	2302      	movs	r3, #2
 {
  8002eca:	4605      	mov	r5, r0
   USBD_LL_OpenEP(pdev,
@@ -7212,7 +7212,7 @@ static uint8_t  *USBD_CUSTOM_HID_GetDeviceQualifierDesc (uint16_t *length)
  8002ece:	2181      	movs	r1, #129	; 0x81
  8002ed0:	f000 fe20 	bl	8003b14 <USBD_LL_OpenEP>
   USBD_LL_OpenEP(pdev,
- 8002ed4:	2308      	movs	r3, #8
+ 8002ed4:	2302      	movs	r3, #2
  8002ed6:	2203      	movs	r2, #3
  8002ed8:	2101      	movs	r1, #1
  8002eda:	4628      	mov	r0, r5
