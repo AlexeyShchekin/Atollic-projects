@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;NUCLEO_USB_HOST_FS/NUCLEO_USB_HOST_FS.ioc&apos; to &apos;NUCLEO_USB_HOST_FS_backup.ioc&apos;" description="Rename resource &apos;NUCLEO_USB_HOST_FS.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="NUCLEO_USB_HOST_FS.ioc" name="NUCLEO_USB_HOST_FS_backup.ioc" stamp="1554932349792" updateReferences="true"/>
+</session>

@@ -12,10 +12,15 @@ uint16_t Y_SIZE = 0;
 uint32_t dtt = 0;
 extern RNG_HandleTypeDef hrng;
 
-void TFT9341_Delay(uint32_t dly)
+__STATIC_INLINE void TFT9341_Delay_NOP()
 {
-   uint32_t i;
-   for(i = 0; i < dly; i++);
+   asm("nop");
+}
+
+__STATIC_INLINE void TFT9341_Delay(uint32_t dly)
+{
+   uint32_t i = 5*dly;
+   while (i--);
 }
 
 __STATIC_INLINE void DelayMicro(__IO uint32_t micros)
@@ -163,8 +168,9 @@ void TFT9341_SendCommand(unsigned char cmd)
 void TFT9341_SendData(unsigned char dt)
 {
        ADDR_DATA = dt;
-       //TFT9341_Delay(1);
-       DelayMicro(1);
+       TFT9341_Delay(10);
+       //DelayMicro(1);
+       //TFT9341_Delay_NOP();
 }
 
 uint32_t TFT9341_ReadReg(uint8_t r)
@@ -304,4 +310,89 @@ void TFT9341_FillRectangle(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2
 {
    TFT9341_SetAddrWindow(x1, y1, x2, y2);
    TFT9341_Flood(color, (uint16_t)(x2-x1+1) * (uint16_t)(y2-y1+1));
+}
+
+void TFT9341_DrawRect(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+{
+	TFT9341_DrawLine(color,x1,y1,x2,y1);
+    TFT9341_DrawLine(color,x2,y1,x2,y2);
+    TFT9341_DrawLine(color,x1,y1,x1,y2);
+    TFT9341_DrawLine(color,x1,y2,x2,y2);
+}
+
+void TFT9341_DrawPixel(int x, int y, uint16_t color)
+{
+	if((x<0)||(y<0)||(x>=X_SIZE)||(y>=Y_SIZE)) return;
+	TFT9341_SetAddrWindow(x, y, x, y);
+	TFT9341_SendCommand(0x2C);
+	TFT9341_SendData(color >> 8);
+	DelayMicro(1);
+	TFT9341_SendData(color & 0xFF);
+}
+
+void TFT9341_DrawLine(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+{
+	int steep = abs(y2-y1)>abs(x2-x1);
+	if (steep)
+	{
+		swap(x1,y1);
+		swap(x2,y2);
+	}
+	if(x1>x2)
+	{
+		swap(x1,x2);
+		swap(y1,y2);
+	}
+
+	int dx,dy;
+	dx=x2-x1;
+	dy=abs(y2-y1);
+	int err=dx/2;
+	int ystep;
+	if(y1<y2) ystep = 1;
+	else ystep = -1;
+	for (;x1<=x2;x1++)
+	{
+		if (steep) TFT9341_DrawPixel(y1,x1,color);
+		else TFT9341_DrawPixel(x1,y1,color);
+		err-=dy;
+		if (err<0)
+		{
+			y1 += ystep;
+			err+=dx;
+		}
+	}
+}
+
+void TFT9341_DrawCircle(uint16_t x0, uint16_t y0, int r, uint16_t color)
+{
+	int f = 1-r;
+	int ddF_x=1;
+	int ddF_y=-2*r;
+	int x = 0;
+	int y = r;
+	TFT9341_DrawPixel(x0,y0+r,color);
+	TFT9341_DrawPixel(x0,y0-r,color);
+	TFT9341_DrawPixel(x0+r,y0,color);
+	TFT9341_DrawPixel(x0-r,y0,color);
+	while (x<y)
+	{
+		if (f>=0)
+		{
+			y--;
+			ddF_y+=2;
+			f+=ddF_y;
+		}
+		x++;
+		ddF_x+=2;
+		f+=ddF_x;
+		TFT9341_DrawPixel(x0+x,y0+y,color);
+		TFT9341_DrawPixel(x0-x,y0+y,color);
+		TFT9341_DrawPixel(x0+x,y0-y,color);
+		TFT9341_DrawPixel(x0-x,y0-y,color);
+		TFT9341_DrawPixel(x0+y,y0+x,color);
+		TFT9341_DrawPixel(x0-y,y0+x,color);
+		TFT9341_DrawPixel(x0+y,y0-x,color);
+		TFT9341_DrawPixel(x0-y,y0-x,color);
+	}
 }

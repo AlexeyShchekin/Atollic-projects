@@ -40,5 +40,9 @@ void TFT9341_Flood(uint16_t color, uint32_t len);
 void TFT9341_SetAddrWindow(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);
 void TFT9341_FillScreen(uint16_t color);
 void TFT9341_FillRectangle(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+void TFT9341_DrawRect(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+void TFT9341_DrawPixel(int x, int y, uint16_t color);
+void TFT9341_DrawLine(uint16_t color, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+void TFT9341_DrawCircle(uint16_t x0, uint16_t y0, int r, uint16_t color);
 
 #endif /* ILI9341_H_ */

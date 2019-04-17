@@ -1,0 +1,14 @@
+/*
+ * ili9341.h
+ *
+ *  Created on: 11 апр. 2019 г.
+ *      Author: Alexey
+ */
+
+#ifndef ILI9341_H_
+#define ILI9341_H_
+
+ #include <stdlib.h>
+#include "stm32f7xx_hal.h"
+
+#endif /* ILI9341_H_ */

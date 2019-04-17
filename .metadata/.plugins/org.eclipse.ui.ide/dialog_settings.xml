@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\alexey\Atollic_STM32_workspace\TFT_STEmWin_test"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\LCD_FMC_ILI9341"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\NUCLEO_USB_HOST_FS"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\Copter_USB_CDC_test"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\VCP_test_STM32F405"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\NUCLEO_USB_OSC"/>
+		<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Examples\GPIO\GPIO_EXTI"/>
+		<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Applications\LwIP\LwIP_HTTP_Server_Netconn_RTOS"/>
+		<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Demonstrations"/>
+		<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Applications\USB_Device\MSC_Standalone\SW4STM32\STM32F767ZI_Nucleo"/>
+		<item value="D:\alexey\Atollic_STM32_workspace\STM32F405_AI"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\CopterTransmitter"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\CopterReceiver"/>
 		<item value="D:\alexey\Atollic_STM32_workspace\SPI_LED_Indicator"/>
@@ -20,6 +31,8 @@
 		<item value="true" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Applications\USB_Device\MSC_Standalone"/>
+			<item value="C:\Users\Alexey\STM32Cube\Repository\STM32Cube_FW_F7_V1.15.0\Projects\STM32F767ZI-Nucleo\Demonstrations\SW4STM32\STM32767ZI_Nucleo"/>
 			<item value="C:\Users\Alexey\Atollic\TrueSTUDIO\MeteoStation"/>
 			<item value="C:\Users\Alexey\Atollic\TrueSTUDIO\DS_Thermo_Test"/>
 			<item value="D:\alexey\Atollic_workspace\PressureSensor"/>

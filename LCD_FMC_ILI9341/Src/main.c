@@ -62,7 +62,11 @@ static void MX_RNG_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+__STATIC_INLINE void DelayMicro(__IO uint32_t micros)
+{
+       micros *=(SystemCoreClock / 1000000) / 5;
+       while (micros--);
+}
 /* USER CODE END 0 */
 
 /**
@@ -102,20 +106,83 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t color = 0;
+  uint32_t counter = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  TFT9341_FillRectangle(RED,0,0,119,159);
-	  //HAL_Delay(100);
-	  TFT9341_FillRectangle(GREEN,120,0,239,159);
-	  //HAL_Delay(100);
-	  TFT9341_FillRectangle(BLUE,0,160,119,319);
-	  //HAL_Delay(100);
-	  TFT9341_FillRectangle(YELLOW,120,160,239,319);
+	  for (counter=0; counter<5; counter++)
+	  {
+		  color = TFT9341_RandColor();
+		  TFT9341_FillRectangle(color,0,0,119,159);
+		  HAL_Delay(100);
+		  color = TFT9341_RandColor();
+		  TFT9341_FillRectangle(color,120,0,239,159);
+		  HAL_Delay(100);
+		  color = TFT9341_RandColor();
+		  TFT9341_FillRectangle(color,0,160,119,319);
+		  HAL_Delay(100);
+		  color = TFT9341_RandColor();
+		  TFT9341_FillRectangle(color,120,160,239,319);
+		  HAL_Delay(100);
+	  }
+	  HAL_Delay(500);
+	  TFT9341_FillScreen(BLACK);
+	  for(counter=0; counter<15000; counter++)
+	  {
+		  color = TFT9341_RandColor();
+
+		  TFT9341_DrawPixel(HAL_RNG_GetRandomNumber(&hrng)%240,HAL_RNG_GetRandomNumber(&hrng)%320, color);
+		  DelayMicro(100);
+	  }
 	  HAL_Delay(1000);
 	  TFT9341_FillScreen(BLACK);
+	  for(int j=0;j<3;j++)
+	  {
+		  for(counter=0; counter<240; counter++)
+		  {
+			  color = TFT9341_RandColor();
+			  TFT9341_DrawLine(color, counter, 0, counter, 319);
+		  }
+		  HAL_Delay(10);
+	  }
+	  HAL_Delay(1000);
+	  TFT9341_FillScreen(BLACK);
+	  for(counter=0; counter<80; counter++)
+	  {
+		  color = TFT9341_RandColor();
+		  uint16_t y1 = HAL_RNG_GetRandomNumber(&hrng)%320;
+		  uint16_t y2 = HAL_RNG_GetRandomNumber(&hrng)%320;
+		  TFT9341_DrawLine(color, 2*counter, y1, 3*counter, y2);
+		  HAL_Delay(10);
+	  }
+	  HAL_Delay(1000);
+	  TFT9341_FillScreen(BLACK);
+
+	  for(counter=0;counter<3;counter++)
+	  {
+		  for(int i=0;i<120;i++)
+		  {
+			  color = TFT9341_RandColor();
+			  TFT9341_DrawRect(color,i,i,239-i,319-i);
+		  }
+		  HAL_Delay(100);
+		  if (counter<4) TFT9341_FillScreen(BLACK);
+	 }
+	 HAL_Delay(1000);
+	 TFT9341_FillScreen(BLACK);
+
+	 for(counter=0;counter<100;counter++)
+	 {
+		 color = TFT9341_RandColor();
+		 //uint16_t x = HAL_RNG_GetRandomNumber(&hrng)%190+30;
+		 uint16_t y = HAL_RNG_GetRandomNumber(&hrng)%270+30;
+		 TFT9341_DrawCircle(20+2*counter, y, 20, color);
+	 }
+	 HAL_Delay(1000);
+	 TFT9341_FillScreen(BLACK);
   }
   /* USER CODE END 3 */
 }
