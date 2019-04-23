@@ -6,28 +6,25 @@
  */
 
 #include "ili9341.h"
+#include "DWT_us.h"
 
 uint16_t X_SIZE = 0;
 uint16_t Y_SIZE = 0;
 uint32_t dtt = 0;
 extern RNG_HandleTypeDef hrng;
 
-__STATIC_INLINE void TFT9341_Delay_NOP()
-{
-   asm("nop");
-}
 
 __STATIC_INLINE void TFT9341_Delay(uint32_t dly)
 {
    uint32_t i = 5*dly;
-   while (i--);
+   while (i--){ }
 }
-
+/*
 __STATIC_INLINE void DelayMicro(__IO uint32_t micros)
 {
        micros *=(SystemCoreClock / 1000000) / 5;
        while (micros--);
-}
+}*/
 
 void TFT9341_ini(void)
 {
@@ -169,7 +166,7 @@ void TFT9341_SendData(unsigned char dt)
 {
        ADDR_DATA = dt;
        TFT9341_Delay(10);
-       //DelayMicro(1);
+       //DelayTicks(200);
        //TFT9341_Delay_NOP();
 }
 
