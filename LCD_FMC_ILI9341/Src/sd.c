@@ -67,7 +67,60 @@ static uint8_t SD_cmd (uint8_t cmd, uint32_t arg)
 void SD_PowerOn(void)
 {
 	Timer1 = 0;
-	while(Timer1<2){}
+	while(Timer1<4){}
+}
+
+uint8_t SD_Read_Block (uint8_t *buff, uint32_t lba)
+{
+	uint8_t result;
+	uint16_t cnt;
+	result=SD_cmd (CMD17, lba);
+	if (result!=0x00) return 5;
+
+	SPI_Release();
+	cnt=0;
+	do
+	{
+		result=SPI_ReceiveByte();
+		cnt++;
+	}
+	while ( (result!=0xFE)&&(cnt<0xFFFF) );
+	if (cnt>=0xFFFF) return 5;
+	for (cnt=0;cnt<512;cnt++)
+	{
+		buff[cnt]=SPI_ReceiveByte();
+	}
+	SPI_Release();
+	SPI_Release();
+	return 0;
+}
+
+uint8_t SD_Write_Block (uint8_t *buff, uint32_t lba)
+{
+	uint8_t result;
+	uint16_t cnt;
+	result=SD_cmd(CMD24,lba);
+	if (result!=0x00) return 6;
+
+	SPI_Release();
+	SPI_SendByte (0xFE);
+	for (cnt=0;cnt<512;cnt++)
+	{
+		SPI_SendByte(buff[cnt]);
+	}
+	SPI_Release();
+	SPI_Release();
+	result=SPI_ReceiveByte();
+	if ((result&0x05)!=0x05) return 6; //Выйти, если результат не 0x05 (Даташит стр 111)
+	cnt=0;
+	do
+	{
+		result=SPI_ReceiveByte();
+		cnt++;
+	}
+	while ( (result!=0xFF)&&(cnt<0xFFFF) );
+	if (cnt>=0xFFFF) return 6;
+	return 0;
 }
 
 uint8_t sd_ini(void)
@@ -135,6 +188,7 @@ uint8_t sd_ini(void)
 	}
 	else
 	{
+		SDError();
 		return 1;
 	}
 	sprintf(str1,"Type SD: 0x%02Xrn",sdinfo.type);

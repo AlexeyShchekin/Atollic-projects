@@ -57,6 +57,8 @@ SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
 volatile uint16_t Timer1 = 0;
+uint8_t sect[512];
+char buffer1[512] = "Test text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text string";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,6 +122,10 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   SD_PowerOn();
   sd_ini();
+  SD_Write_Block((uint8_t*)buffer1,0x0400);
+  SD_Read_Block(sect,0x0400);
+  for (uint16_t i=0;i<512;i++) HAL_UART_Transmit(&huart1,sect+i,1,0x1000);
+  HAL_UART_Transmit(&huart1,(uint8_t*)"rn",2,0x1000);
 
   TFT9341_ini();
   TFT9341_FillScreen(RED);
