@@ -24,6 +24,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <string.h>
+#include <stdio.h>
 #include "DWT_us.h"
 #include "sd.h"
 /* USER CODE END Includes */
@@ -58,7 +60,15 @@ SRAM_HandleTypeDef hsram1;
 /* USER CODE BEGIN PV */
 volatile uint16_t Timer1 = 0;
 uint8_t sect[512];
-char buffer1[512] = "Test text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text string";
+//char buffer1[512] = "Test text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text stringTest text string";
+extern char str1[60];
+uint32_t byteswritten,bytesread;
+uint8_t result;
+extern char USERPath[4]; /* logical drive path */
+FATFS SDFatFs;
+//FATFS *fs;
+FIL MyFile;
+FILINFO fno;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -81,6 +91,37 @@ static void MX_USART1_UART_Init(void);
        micros *=(SystemCoreClock / 1000000) / 5;
        while (micros--);
 }*/
+FRESULT ReadLongFile(void)
+{
+	uint16_t i=0, i1=0;
+	uint32_t ind=0;
+	uint32_t f_size = fno.fsize;
+	sprintf(str1,"fsize: %lu\r\n",(unsigned long)f_size);
+	HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+	ind=0;
+	do
+	{
+		if(f_size<512)
+		{
+			i1=f_size;
+		}
+		else
+		{
+			i1=512;
+		}
+		f_size-=i1;
+		f_lseek(&MyFile,ind);
+		f_read(&MyFile,sect,i1,(UINT *)&bytesread);
+		for(i=0;i<bytesread;i++)
+		{
+			HAL_UART_Transmit(&huart1,sect+i,1,0x1000);
+		}
+		ind+=i1;
+	}
+	while (f_size>0);
+	HAL_UART_Transmit(&huart1,(uint8_t*)"\r\n",2,0x1000);
+	return FR_OK;
+}
 /* USER CODE END 0 */
 
 /**
@@ -90,7 +131,12 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	FRESULT res; //результат выполнения
+	uint8_t wtext[]="Hello from STM32!!!";
+	FILINFO fileInfo;
+	char *fn;
+	DIR dir;
+	DWORD fre_clust, fre_sect, tot_sect;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -120,12 +166,91 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
-  SD_PowerOn();
-  sd_ini();
-  SD_Write_Block((uint8_t*)buffer1,0x0400);
-  SD_Read_Block(sect,0x0400);
-  for (uint16_t i=0;i<512;i++) HAL_UART_Transmit(&huart1,sect+i,1,0x1000);
-  HAL_UART_Transmit(&huart1,(uint8_t*)"rn",2,0x1000);
+
+  disk_initialize(SDFatFs.drv);
+  /*if(f_mount(&SDFatFs,(TCHAR const*)USERPath,0)!=FR_OK)
+  {
+	  Error_Handler();
+  }
+  else
+  {
+	  FRESULT fr = f_stat("123.TXT",&fno);
+	  switch (fr)
+	  {
+	      case FR_OK:
+	    	  sprintf(str1,"Size: %lu\r\n",fno.fsize);
+	    	  HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+	          break;
+	      case FR_NO_FILE:
+	    	  HAL_UART_Transmit(&huart1,(uint8_t*)"It is not exist.\r\n", 18, 0x1000);
+	          break;
+	      default:
+	    	  sprintf(str1,"An error occured. (%d)\r\n",fr);
+	    	  HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+	  }
+	  if (f_open(&MyFile,"123.TXT",FA_READ)!=FR_OK)
+	  {
+		  Error_Handler();
+	  }
+	  else
+	  {
+		  ReadLongFile();
+		  f_close(&MyFile);
+	  }
+	  fr = f_open(&MyFile,"123.TXT",FA_READ);
+	  if (fr==FR_OK)
+	  {
+		  ReadLongFile();
+		  f_close(&MyFile);
+	  }
+
+	  if(f_open(&MyFile,"mywrite.txt",FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)
+	  {
+	      Error_Handler();
+	  }
+	  else
+	  {
+	      res=f_write(&MyFile,wtext,sizeof(wtext),(void*)&byteswritten);
+	      if((byteswritten==0)||(res!=FR_OK))
+	      {
+	    	  Error_Handler();
+	      }
+	      f_close(&MyFile);
+	  }
+  }*/
+
+  //read dir
+  if(f_mount(&SDFatFs,(TCHAR const*)USERPath,0)!=FR_OK)
+  {
+	  Error_Handler();
+  }
+  else
+  {
+	  //fileInfo.fname = (char*)sect;
+	  //fileInfo.fsize = sizeof(sect);
+	  result = f_opendir(&dir, "/");
+	  if (result == FR_OK)
+	  {
+		  while(1)
+		  {
+		      result = f_readdir(&dir, &fileInfo);
+		      if (result==FR_OK && fileInfo.fname[0])
+		      {
+		    	  fn = fileInfo.fname;
+		    	  if(strlen(fn)) HAL_UART_Transmit(&huart1,(uint8_t*)fn,strlen(fn),0x1000);
+		    	  else HAL_UART_Transmit(&huart1,(uint8_t*)fileInfo.fname,strlen((char*)fileInfo.fname),0x1000);
+		    	  if(fileInfo.fattrib&AM_DIR)
+		    	  {
+		    	      HAL_UART_Transmit(&huart1,(uint8_t*)" [DIR]",7,0x1000);
+		    	  }
+		      }
+		      else break;
+		      HAL_UART_Transmit(&huart1,(uint8_t*)"\r\n",2,0x1000);
+		  }
+		  f_closedir(&dir);
+	  }
+  }
+  FATFS_UnLinkDriver(USERPath);
 
   TFT9341_ini();
   TFT9341_FillScreen(RED);

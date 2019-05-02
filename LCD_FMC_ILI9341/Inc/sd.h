@@ -35,5 +35,6 @@ uint8_t sd_ini(void);
 void SPI_SendByte(uint8_t bt);
 uint8_t SPI_ReceiveByte(void);
 void SPI_Release(void);
+uint8_t SPI_wait_ready(void);
 
 #endif /* SD_H_ */
